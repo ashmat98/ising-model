@@ -38,7 +38,10 @@ public:
     }
 
     void single_step() {
-        auto[r, c] = rand_lattice_site();
+        tuple<int,int> site = rand_lattice_site();
+		int r = std::get<0>(site);
+		int c = std::get<1>(site);
+
         int dE = flip_E_change(r, c);
         double p = rand_std_uniform();
         if (T * log(p) < -dE) {

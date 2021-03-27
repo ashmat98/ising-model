@@ -35,7 +35,7 @@ tuple<int, int> Base::rand_lattice_site() {
     static uniform_int_distribution<int> dis_r(1, Nr);
     static uniform_int_distribution<int> dis_c(1, Nc);
 
-    return {dis_r(gen), dis_c(gen)};
+    return make_tuple((int)dis_r(gen), (int)dis_c(gen));
 }
 
 void Base::set_state(py::array_t<int, py::array::c_style> state) {
