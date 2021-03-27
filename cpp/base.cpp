@@ -78,7 +78,7 @@ int Base::calc_E() {
     for (int r = 1; r <= Nr; r++) {
         for (int c = 1; c <= Nc; c++) {
             for (int d = 0; d < 4; d++) {
-                E += get(r, c) * get(r + dir_r[d], c + dir_c[d]);
+                E -= get(r, c) * get(r + dir_r[d], c + dir_c[d]);
             }
         }
     }

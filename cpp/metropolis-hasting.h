@@ -55,13 +55,12 @@ public:
         int dE = 0;
         int s = get(r, c);
         for (int d = 0; d < 4; d++) {
-            dE += 2 * (-s) * get(r + dir_r[d], c + dir_c[d]);
+            dE += 2 * (+s) * get(r + dir_r[d], c + dir_c[d]);
         }
         return dE;
     }
 
     inline int flip(int r, int c) {
-        int s = *L[g(r, c)];
         return (*L[g(r, c)] *= -1);
     }
 
