@@ -43,9 +43,16 @@ public:
     int E; // energy
     double T; //temperature
     int STEPS;
+    unsigned int SEED;
 
-    Base(int Nr, int Nc) : Nr(Nr), Nc(Nc), STEPS(0) {
+    Base(int Nr, int Nc, int SEED_ = -1) : Nr(Nr), Nc(Nc),
+                                           STEPS(0) {
         init_arrays();
+        T = 0;
+        if (SEED_ < 0)
+            SEED = time(0);
+        else
+            SEED = SEED_;
     }
 
     void set_state(py::array_t<int, py::array::c_style> state);
@@ -65,6 +72,8 @@ public:
     double rand_std_uniform();
 
     tuple<int, int> rand_lattice_site();
+
+    virtual void reset_history();
 
     int calc_E();
 

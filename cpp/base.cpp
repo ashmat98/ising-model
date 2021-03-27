@@ -25,13 +25,13 @@ void Base::init_arrays() {
 }
 
 double Base::rand_std_uniform() {
-    static mt19937 gen(static_cast<long unsigned int>(time(0))); //Standard mersenne_twister_engine seeded with rd()
+    static mt19937 gen(SEED); //Standard mersenne_twister_engine seeded with rd()
     static uniform_real_distribution<double> dis(0, 1);
     return dis(gen);
 }
 
 tuple<int, int> Base::rand_lattice_site() {
-    static mt19937 gen(static_cast<long unsigned int>(time(0))); //Standard mersenne_twister_engine seeded with rd()
+    static mt19937 gen(SEED + 1); //Standard mersenne_twister_engine seeded with rd()
     static uniform_int_distribution<int> dis_r(1, Nr);
     static uniform_int_distribution<int> dis_c(1, Nc);
 
@@ -62,6 +62,7 @@ void Base::random_init() {
             *L[g(r, c)] = 2 * int(rand_std_uniform() > 0.5) - 1;
         }
     }
+    reset_history();
 }
 
 int Base::get_E() {
@@ -102,6 +103,12 @@ void Base::set_T(double temperature) {
 
 int Base::get_T() {
     return T;
+}
+
+void Base::reset_history() {
+    STEPS = 0;
+    calc_E();
+    calc_M();
 }
 
 
