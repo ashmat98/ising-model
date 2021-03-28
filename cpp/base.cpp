@@ -65,7 +65,7 @@ tuple<int, int> Base::rand_lattice_site() const {
     static uniform_int_distribution<int> dis_r(1, Nr);
     static uniform_int_distribution<int> dis_c(1, Nc);
 
-    return make_tuple((int)dis_r(gen), (int)dis_c(gen));
+    return make_tuple((int) dis_r(gen), (int) dis_c(gen));
 }
 
 void Base::set_state(const py::array_t<int, py::array::c_style>& state) {
@@ -78,22 +78,21 @@ void Base::set_state(const py::array_t<int, py::array::c_style>& state) {
 }
 
 py::array_t<char, py::array::c_style> Base::get_state() {
-//        return py::array_t<char>(Nc, _L[0]);
     return py::array_t<char>({Nr, Nc}, {Nc, 1}, _L);
 }
 
 char Base::get(int r, int c) const {
-    return char((*L[g(r, c)]) * MASK[g(r,c)]);
-}
-void Base::set(int r, int c, char val){
-    (*L[g(r, c)]) = char(val * MASK[g(r,c)]);
+    return char(*L[g(r, c)]);
 }
 
+char Base::set(int r, int c, char val) {
+    return (*L[g(r, c)]) = val;
+}
 
 void Base::random_init() {
     for (int r = 1; r <= Nr; r++) {
         for (int c = 1; c <= Nc; c++) {
-            set(r, c, char(2 * int(rand_std_uniform() > 0.5) - 1));
+            set(r, c, 2 * int(rand_std_uniform() > 0.5) - 1);
         }
     }
     reset_history();
@@ -144,6 +143,7 @@ void Base::reset_history() {
     calc_E();
     calc_M();
 }
+
 
 
 

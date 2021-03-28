@@ -3,7 +3,6 @@ import numpy as np
 
 
 def to_run(i, steps, T, N, freq, SEED, return_engine=False):
-    print(i)
     engine = Simulate_MH(int(N), int(N), int(freq), False, int(SEED))
     engine.set_T(T)
     engine.random_init()
