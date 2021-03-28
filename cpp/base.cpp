@@ -58,7 +58,6 @@ void Base::init_arrays() {
         L[g(Nr + 1, Nc + 1)] = ZERO;
         L[g(Nr + 1, 0)] = ZERO;
     } else if (periodic_bc == 0) {
-        *ZERO = 1;
 
         for (int r = 0; r <= Nr + 1; r++) {
             L[g(r, 0)] = ZERO;
