@@ -5,10 +5,6 @@ namespace py = pybind11;
 
 using namespace std;
 
-// variables for moving to neighbours
-const int dir_x[4] = {-1, 0, 1, 0};
-const int dir_y[4] = {0, 1, 0, -1};
-
 
 class Simulate_MH : public Base {
 public:
@@ -17,8 +13,9 @@ public:
     vector<int> history_M;
     vector<int> history_E;
 
-    Simulate_MH(int Nr, int Nc, int frequency_to_store = 1, int SEED = -1) :
-            Base(Nr, Nc, SEED),
+    Simulate_MH(int Nr, int Nc, int frequency_to_store = 1,
+                bool periodic_bc = true, int SEED = -1) :
+            Base(Nr, Nc, periodic_bc, SEED),
             FLIPS(0), store_frequency(frequency_to_store) {
 
     }
@@ -27,7 +24,7 @@ public:
         if (temperature >= 0) {
             set_T(temperature);
         }
-        for (int i = 0; i < steps; i++) {
+        for (int i = 0; i < steps; ++i) {
             STEPS += 1;
             single_step();
             if (STEPS % store_frequency == 0) {
@@ -38,12 +35,16 @@ public:
     }
 
     void single_step() {
-        tuple<int,int> site = rand_lattice_site();
-		int r = std::get<0>(site);
-		int c = std::get<1>(site);
+        static int r, c, dE;
+        static double p;
+        static tuple<int, int> site;
 
-        int dE = flip_E_change(r, c);
-        double p = rand_std_uniform();
+        site = rand_lattice_site();
+        r = std::get<0>(site);
+        c = std::get<1>(site);
+
+        dE = flip_E_change(r, c);
+        p = rand_std_uniform();
         if (T * log(p) < -dE) {
             FLIPS += 1;
             E += dE;
@@ -54,14 +55,14 @@ public:
     int flip_E_change(int r, int c) {
         int dE = 0;
         int s = get(r, c);
-        for (int d = 0; d < 4; d++) {
+        for (int d = 0; d < 4; ++d) {
             dE += 2 * (+s) * get(r + dir_r[d], c + dir_c[d]);
         }
         return dE;
     }
 
     inline int flip(int r, int c) {
-        return (*L[g(r, c)] *= -1);
+        return set(r, c, -get(r, c));
     }
 
     py::array_t<int> get_sampled_M() {

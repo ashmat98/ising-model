@@ -24,52 +24,55 @@ void Base::init_arrays() {
     L[g(Nr + 1, 0)] = &_L[_g(0, Nc - 1)];
 }
 
-double Base::rand_std_uniform() {
+double Base::rand_std_uniform() const {
     static mt19937 gen(SEED); //Standard mersenne_twister_engine seeded with rd()
     static uniform_real_distribution<double> dis(0, 1);
     return dis(gen);
 }
 
-tuple<int, int> Base::rand_lattice_site() {
+tuple<int, int> Base::rand_lattice_site() const {
     static mt19937 gen(SEED + 1); //Standard mersenne_twister_engine seeded with rd()
     static uniform_int_distribution<int> dis_r(1, Nr);
     static uniform_int_distribution<int> dis_c(1, Nc);
 
-    return make_tuple((int)dis_r(gen), (int)dis_c(gen));
+    return make_tuple((int) dis_r(gen), (int) dis_c(gen));
 }
 
-void Base::set_state(py::array_t<int, py::array::c_style> state) {
+void Base::set_state(const py::array_t<int, py::array::c_style> &state) {
     auto st = state.unchecked<2>();
     for (int r = 0; r < state.shape(0); r++) {
         for (int c = 0; c < state.shape(1); c++) {
-            *L[g(r + 1, c + 1)] = int(st(r, c));
+            set(r + 1, c + 1, char(st(r, c)));
         }
     }
 }
 
 py::array_t<char, py::array::c_style> Base::get_state() {
-//        return py::array_t<char>(Nc, _L[0]);
     return py::array_t<char>({Nr, Nc}, {Nc, 1}, _L);
 }
 
-int Base::get(int r, int c) {
-    return int(*L[g(r, c)]);
+char Base::get(int r, int c) const {
+    return char(*L[g(r, c)]);
+}
+
+char Base::set(int r, int c, char val) {
+    return (*L[g(r, c)]) = val;
 }
 
 void Base::random_init() {
     for (int r = 1; r <= Nr; r++) {
         for (int c = 1; c <= Nc; c++) {
-            *L[g(r, c)] = 2 * int(rand_std_uniform() > 0.5) - 1;
+            set(r, c, 2 * int(rand_std_uniform() > 0.5) - 1);
         }
     }
     reset_history();
 }
 
-int Base::get_E() {
+int Base::get_E() const {
     return E;
 }
 
-int Base::get_M() {
+int Base::get_M() const {
     return M;
 }
 
@@ -101,7 +104,7 @@ void Base::set_T(double temperature) {
     T = temperature;
 }
 
-int Base::get_T() {
+double Base::get_T() const {
     return T;
 }
 
@@ -110,6 +113,7 @@ void Base::reset_history() {
     calc_E();
     calc_M();
 }
+
 
 
 
