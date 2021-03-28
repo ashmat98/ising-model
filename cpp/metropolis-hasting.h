@@ -14,7 +14,7 @@ public:
     vector<int> history_E;
 
     Simulate_MH(int Nr, int Nc, int frequency_to_store = 1,
-                bool periodic_bc = true, int SEED = -1) :
+                bool periodic_bc=true, int SEED = -1) :
             Base(Nr, Nc, periodic_bc, SEED),
             FLIPS(0), store_frequency(frequency_to_store) {
 
@@ -35,16 +35,12 @@ public:
     }
 
     void single_step() {
-        static int r, c, dE;
-        static double p;
-        static tuple<int, int> site;
+        tuple<int,int> site = rand_lattice_site();
+		static int r = std::get<0>(site);
+		static int c = std::get<1>(site);
 
-        site = rand_lattice_site();
-        r = std::get<0>(site);
-        c = std::get<1>(site);
-
-        dE = flip_E_change(r, c);
-        p = rand_std_uniform();
+        static int dE = flip_E_change(r, c);
+        static double p = rand_std_uniform();
         if (T * log(p) < -dE) {
             FLIPS += 1;
             E += dE;
@@ -62,7 +58,9 @@ public:
     }
 
     inline int flip(int r, int c) {
-        return set(r, c, -get(r, c));
+        int s = get(r,c);
+        set(r,c, -s);
+        return -s;
     }
 
     py::array_t<int> get_sampled_M() {
