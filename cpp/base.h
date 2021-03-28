@@ -28,6 +28,7 @@ private:
 
 public:
     const int Nr, Nc; //shape of lattice
+    const int stride;
 
     inline int _g(int r, int c) const {
         return r * Nc + c;
@@ -46,11 +47,13 @@ public:
     double T; //temperature
     int STEPS;
     unsigned int SEED;
-    const bool periodic_bc;
+    const int periodic_bc;
 
-    Base(int Nr, int Nc, bool periodic_bc = true, int SEED_ = -1) :
-            Nr(Nr), Nc(Nc), STEPS(0), M(0), E(0), T(0), periodic_bc(periodic_bc) {
+    Base(int Nr, int Nc, int periodic_bc = 1, int SEED_ = -1) :
+            Nr(Nr), Nc(Nc), STEPS(0), M(0), E(0), T(0), stride(log(Nc - 1.0) + 1),
+            periodic_bc(periodic_bc) {
         init_arrays();
+//        init_mask();
         T = 0;
         if (SEED_ < 0)
             SEED = time(0);

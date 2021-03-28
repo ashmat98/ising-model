@@ -14,7 +14,7 @@ public:
     vector<int> history_E;
 
     Simulate_MH(int Nr, int Nc, int frequency_to_store = 1,
-                bool periodic_bc = true, int SEED = -1) :
+                int periodic_bc = 1, int SEED = -1) :
             Base(Nr, Nc, periodic_bc, SEED),
             FLIPS(0), store_frequency(frequency_to_store) {
 

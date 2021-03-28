@@ -2,30 +2,33 @@
 
 void Base::init_mask(){
     MASK = new char[(Nr + 2) * (Nc + 2)];
-    for (int r = 0; r <= Nr+1; r++) {
-        for (int c = 0; c <= Nc+1; c++) {
+    for (int r = 0; r <= Nr + 1; r++) {
+        for (int c = 0; c <= Nc + 1; c++) {
             MASK[g(r, c)] = 1;
         }
     }
-//    for (int r = 1; r <= Nr; r++) {
-//        MASK[g(r, 0)] = -1;
-//        MASK[g(r, Nc + 1)] = -1;
-//    }
-//    for (int c = 1; c <= Nc; c++) {
-//        MASK[g(0, c)] = -1;
-//        MASK[g(Nr + 1, c)] = -1;
-//    }
+    for (int r = 1; r <= Nr; r++) {
+        MASK[g(r, 0)] = -1;
+        MASK[g(r, Nc + 1)] = +1;
+    }
+    for (int c = 1; c <= Nc; c++) {
+        MASK[g(0, c)] = -1;
+        MASK[g(Nr + 1, c)] = +1;
+    }
 }
 void Base::init_arrays() {
     _L = new char[Nr * Nc];
     L = new char *[(Nr + 2) * (Nc + 2)];
+    char *ZERO;
+    ZERO = new char;
+    *ZERO = 0;
 
     for (int r = 1; r <= Nr; r++) {
         for (int c = 1; c <= Nc; c++) {
             L[g(r, c)] = &_L[_g(r - 1, c - 1)];
         }
     }
-    if (periodic_bc){
+    if (periodic_bc == 1) {
         for (int r = 1; r <= Nr; r++) {
             L[g(r, 0)] = &_L[_g(r - 1, Nc - 1)];
             L[g(r, Nc + 1)] = &_L[_g(r - 1, 0)];
@@ -39,18 +42,34 @@ void Base::init_arrays() {
         L[g(Nr + 1, Nc + 1)] = &_L[_g(0, 0)];
         L[g(Nr + 1, 0)] = &_L[_g(0, Nc - 1)];
     }
-    else{
-        char * ZERO = new char;
-        *ZERO = 0;
+    if (periodic_bc == 2) {
+        int dr = Nr / 2, dc = Nc / 2;
 
-        for (int r = 0; r <= Nr+1; r++) {
+        for (int r = 1; r <= Nr; r++) {
+            L[g(r, 0)] = &_L[_g((r - 1 + dr) % Nr, Nc - 1)];
+            L[g(r, Nc + 1)] = &_L[_g((Nr + r - 1 - dr) % Nr, 0)];
+        }
+        for (int c = 1; c <= Nc; c++) {
+            L[g(0, c)] = &_L[_g(Nr - 1, (c - 1 + dc) % Nc)];
+            L[g(Nr + 1, c)] = &_L[_g(0, (Nc + c - 1 - dc) % Nc)];
+        }
+        L[g(0, 0)] = ZERO;
+        L[g(0, Nc + 1)] = ZERO;
+        L[g(Nr + 1, Nc + 1)] = ZERO;
+        L[g(Nr + 1, 0)] = ZERO;
+    } else if (periodic_bc == 0) {
+        *ZERO = 1;
+
+        for (int r = 0; r <= Nr + 1; r++) {
             L[g(r, 0)] = ZERO;
             L[g(r, Nc + 1)] = ZERO;
         }
-        for (int c = 0; c <= Nc+1; c++) {
+        for (int c = 0; c <= Nc + 1; c++) {
             L[g(0, c)] = ZERO;
             L[g(Nr + 1, c)] = ZERO;
         }
+    } else {
+        assert(true);
     }
 }
 

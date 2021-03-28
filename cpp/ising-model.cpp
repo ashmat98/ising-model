@@ -16,7 +16,7 @@ PYBIND11_MODULE(ising_model, m) {
     )pbdoc";
 
     py::class_<Base>(m, "Base")
-            .def(py::init<int, int, bool, int>())
+            .def(py::init<int, int, int, int>())
             .def("random_init", &Base::random_init)
             .def("set_state", &Base::set_state)
             .def("get", &Base::get)
@@ -34,13 +34,14 @@ PYBIND11_MODULE(ising_model, m) {
             .def_readonly("SEED", &Base::SEED);
 
     py::class_<Simulate_MH, Base>(m, "Simulate_MH")
-            .def(py::init<int, int, int, bool, int>())
+            .def(py::init<int, int, int, int, int>())
             .def("make_steps", &Simulate_MH::make_steps, "steps"_a, "temperature"_a = -1)
             .def("single_step", &Simulate_MH::single_step)
             .def("get_sampled_M", &Simulate_MH::get_sampled_M)
             .def("get_sampled_E", &Simulate_MH::get_sampled_E)
             .def("reset_sampled_M", &Simulate_MH::reset_sampled_M)
             .def("reset_sampled_E", &Simulate_MH::reset_sampled_E)
+            .def("flip_E_change", &Simulate_MH::flip_E_change)
             .def_readonly("FLIPS", &Simulate_MH::FLIPS);
 
     // ... remainder ...
