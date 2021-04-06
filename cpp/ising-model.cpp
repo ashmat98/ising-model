@@ -18,6 +18,7 @@ PYBIND11_MODULE(ising_model, m) {
     py::class_<Base>(m, "Base")
             .def(py::init<int, int, int, int>())
             .def("random_init", &Base::random_init)
+            .def("constant_init", &Base::constant_init)
             .def("set_state", &Base::set_state)
             .def("get", &Base::get)
             .def("get_state", &Base::get_state)

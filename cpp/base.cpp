@@ -86,13 +86,22 @@ tuple<int, int> Base::rand_lattice_site() const {
     return make_tuple((int) dis_r(gen), (int) dis_c(gen));
 }
 
-void Base::set_state(const py::array_t<int, py::array::c_style>& state) {
+tuple<int, int> Base::next_lattice_site() const {
+    static int i = -1;
+    i = (i == Nr * Nc - 1) ? 0 : i + 1;
+
+    return make_tuple((i / Nc) + 1, (i % Nc) + 1);
+}
+
+void Base::set_state(const py::array_t<int, py::array::c_style> &state) {
     auto st = state.unchecked<2>();
     for (int r = 0; r < state.shape(0); r++) {
         for (int c = 0; c < state.shape(1); c++) {
-            set(r+1, c+1, char(st(r, c)));
+            set(r + 1, c + 1, char(st(r, c)));
         }
     }
+    calc_E();
+    calc_M();
 }
 
 py::array_t<char, py::array::c_style> Base::get_state() {
@@ -110,7 +119,16 @@ char Base::set(int r, int c, char val) {
 void Base::random_init() {
     for (int r = 1; r <= Nr; r++) {
         for (int c = 1; c <= Nc; c++) {
-            set(r, c, 2 * int(rand_std_uniform() > 0.5) - 1);
+            set(r, c, char(2 * int(rand_std_uniform() > 0.5) - 1));
+        }
+    }
+    reset_history();
+}
+
+void Base::constant_init() {
+    for (int r = 1; r <= Nr; r++) {
+        for (int c = 1; c <= Nc; c++) {
+            set(r, c, 1);
         }
     }
     reset_history();

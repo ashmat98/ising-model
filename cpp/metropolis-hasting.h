@@ -45,6 +45,7 @@ public:
 
         dE = flip_E_change(r, c);
         p = rand_std_uniform();
+
         if (T * log(p) < -dE) {
             FLIPS += 1;
             E += dE;
@@ -53,15 +54,17 @@ public:
     }
 
     int flip_E_change(int r, int c) {
-        int dE = 0;
-        int s = get(r, c);
+        static int dE;
+        static char s;
+        dE = 0;
+        s = get(r, c);
         for (int d = 0; d < 4; ++d) {
             dE += 2 * (+s) * get(r + dir_r[d], c + dir_c[d]);
         }
         return dE;
     }
 
-    inline int flip(int r, int c) {
+    inline char flip(int r, int c) {
         return set(r, c, -get(r, c));
     }
 

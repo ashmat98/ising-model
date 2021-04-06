@@ -28,13 +28,12 @@ private:
 
 public:
     const int Nr, Nc; //shape of lattice
-    const int stride;
 
     inline int _g(int r, int c) const {
         return r * Nc + c;
     }
 
-    char *MASK;
+    char *MASK{};
     inline int g(int r, int c) const {
         return r * (Nc + 2) + c;
     }
@@ -50,7 +49,7 @@ public:
     const int periodic_bc;
 
     Base(int Nr, int Nc, int periodic_bc = 1, int SEED_ = -1) :
-            Nr(Nr), Nc(Nc), STEPS(0), M(0), E(0), T(0), stride(log(Nc - 1.0) + 1),
+            Nr(Nr), Nc(Nc), STEPS(0), M(0), E(0), T(0),
             periodic_bc(periodic_bc) {
         init_arrays();
 //        init_mask();
@@ -79,6 +78,8 @@ public:
 
     void random_init();
 
+    void constant_init();
+
     double rand_std_uniform() const;
 
     tuple<int, int> rand_lattice_site() const;
@@ -100,6 +101,8 @@ public:
     ~Base() {
         destruct_arrays();
     };
+
+    tuple<int, int> next_lattice_site() const;
 };
 
 #endif //ISING_MODEL_BASE_H

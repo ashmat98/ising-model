@@ -8,7 +8,10 @@ include(fetch-pybind11.cmake)
 add_subdirectory(cpp)
 #
 ##set(CMAKE_CXX_FLAGS "-Wall -mavx2")
-#message("AAAAAaaa ${CMAKE_BUILD_TYPE} ;; ${CMAKE_CXX_FLAGS_RELEASE} ;; ${CMAKE_CXX_FLAGS_DEBUG} ;; ${CMAKE_CXX_FLAGS}")
+#SET(CMAKE_CXX_FLAGS_RELEASE "-ffast-math ${CMAKE_CXX_FLAGS_RELEASE}")
+
+message("AAAAAaaa ${CMAKE_BUILD_TYPE} ;; ${CMAKE_CXX_FLAGS_RELEASE} ;; ${CMAKE_CXX_FLAGS_DEBUG} ;; ${CMAKE_CXX_FLAGS}")
+
 
 pybind11_add_module(ising_model
         cpp/ising-model.cpp
