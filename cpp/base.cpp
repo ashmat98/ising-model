@@ -72,18 +72,14 @@ void Base::init_arrays() {
     }
 }
 
-double Base::rand_std_uniform() const {
-    static mt19937 gen(SEED); //Standard mersenne_twister_engine seeded with rd()
+double Base::rand_std_uniform() {
     static uniform_real_distribution<double> dis(0, 1);
-    return dis(gen);
+    return dis(generator);
 }
 
-tuple<int, int> Base::rand_lattice_site() const {
-    static mt19937 gen(SEED + 1); //Standard mersenne_twister_engine seeded with rd()
-    static uniform_int_distribution<int> dis_r(1, Nr);
-    static uniform_int_distribution<int> dis_c(1, Nc);
-
-    return make_tuple((int) dis_r(gen), (int) dis_c(gen));
+tuple<int, int> Base::rand_lattice_site() {
+    return make_tuple((int) distribution_r(generator),
+                      (int) distribution_c(generator));
 }
 
 tuple<int, int> Base::next_lattice_site() const {
@@ -93,19 +89,24 @@ tuple<int, int> Base::next_lattice_site() const {
     return make_tuple((i / Nc) + 1, (i % Nc) + 1);
 }
 
-void Base::set_state(const py::array_t<int, py::array::c_style> &state) {
-    auto st = state.unchecked<2>();
-    for (int r = 0; r < state.shape(0); r++) {
-        for (int c = 0; c < state.shape(1); c++) {
-            set(r + 1, c + 1, char(st(r, c)));
+void Base::set_state(const vector<vector<char>> &state) {
+    for (size_t r = 0; r < Nr; r++) {
+        for (size_t c = 0; c < Nc; c++) {
+            set(r + 1, c + 1, char(state[r][c]));
         }
     }
     calc_E();
     calc_M();
 }
 
-py::array_t<char, py::array::c_style> Base::get_state() {
-    return py::array_t<char>({Nr, Nc}, {Nc, 1}, _L);
+vector<vector<char>> Base::get_state() const {
+    vector<vector<char>> state(Nr, std::vector<char>(Nc, 0));
+    for (size_t r = 0; r < Nr; r++) {
+        for (size_t c = 0; c < Nc; c++) {
+            state[r][c] = get(r + 1, c + 1);
+        }
+    }
+    return move(state);
 }
 
 char Base::get(int r, int c) const {
@@ -113,6 +114,7 @@ char Base::get(int r, int c) const {
 }
 
 char Base::set(int r, int c, char val) {
+//    assert(r>0 && r<=Nr && c>0 && c<=Nc);
     return (*L[g(r, c)]) = val;
 }
 

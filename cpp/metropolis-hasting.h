@@ -1,20 +1,17 @@
 #include "base.h"
 
-namespace py = pybind11;
-
-
 using namespace std;
 
 
-class Simulate_MH : public Base {
+class SimulateMH : public Base {
 public:
     int FLIPS;
     int store_frequency;
     vector<int> history_M;
     vector<int> history_E;
 
-    Simulate_MH(int Nr, int Nc, int frequency_to_store = 1,
-                int periodic_bc = 1, int SEED = -1) :
+    SimulateMH(int Nr, int Nc, int frequency_to_store = 1,
+               int periodic_bc = 1, int SEED = -1) :
             Base(Nr, Nc, periodic_bc, SEED),
             FLIPS(0), store_frequency(frequency_to_store) {
 
@@ -57,6 +54,7 @@ public:
         static int dE;
         static char s;
         dE = 0;
+//        py::print("get 57", r, c, Nr, Nc);
         s = get(r, c);
         for (int d = 0; d < 4; ++d) {
             dE += 2 * (+s) * get(r + dir_r[d], c + dir_c[d]);
@@ -68,12 +66,12 @@ public:
         return set(r, c, -get(r, c));
     }
 
-    py::array_t<int> get_sampled_M() {
-        return py::array_t<int>(history_M.size(), history_M.data());
+    vector<int> get_sampled_M() {
+        return history_M;
     }
 
-    py::array_t<int> get_sampled_E() {
-        return py::array_t<int>(history_E.size(), history_E.data());
+    vector<int> get_sampled_E() {
+        return history_E;
     }
 
     void reset_sampled_M() {

@@ -3,6 +3,6 @@ project(ising-model)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(ising_model_cpp main.cpp)
+add_executable(ising_model_cpp main.cpp base.cpp)
 
 

@@ -9,24 +9,30 @@
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
+#include <tuple>
 #include <cmath>
 #include <random>
 #include <ctime>
+#include <cassert>
 
-#include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
-
-namespace py = pybind11;
-
+//#include <pybind11/pybind11.h>
+//#include <pybind11/numpy.h>
+//namespace py = pybind11;
 
 using namespace std;
 
 class Base {
-private:
+protected:
+    mt19937 generator; //Standard mersenne_twister_engine seeded with rd()
+    uniform_int_distribution<int> distribution_r;
+    uniform_int_distribution<int> distribution_c;
+
+public:
+
+
     char *_L{};
     char **L{};
 
-public:
     const int Nr, Nc; //shape of lattice
 
     inline int _g(int r, int c) const {
@@ -50,7 +56,8 @@ public:
 
     Base(int Nr, int Nc, int periodic_bc = 1, int SEED_ = -1) :
             Nr(Nr), Nc(Nc), STEPS(0), M(0), E(0), T(0),
-            periodic_bc(periodic_bc) {
+            periodic_bc(periodic_bc),
+            generator(SEED + 1), distribution_r(1, Nr), distribution_c(1, Nc) {
         init_arrays();
 //        init_mask();
         T = 0;
@@ -60,9 +67,9 @@ public:
             SEED = SEED_;
     }
 
-    void set_state(const py::array_t<int, py::array::c_style> &state);
+    void set_state(const vector<vector<char>> &state);
 
-    py::array_t<char, py::array::c_style> get_state();
+    vector<vector<char>> get_state() const;
 
     char get(int r, int c) const;
 
@@ -80,9 +87,9 @@ public:
 
     void constant_init();
 
-    double rand_std_uniform() const;
+    double rand_std_uniform();
 
-    tuple<int, int> rand_lattice_site() const;
+    tuple<int, int> rand_lattice_site();
 
     virtual void reset_history();
 
