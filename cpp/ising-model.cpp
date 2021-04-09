@@ -40,7 +40,6 @@ public:
                  int periodic_bc = 1, int SEED = -1) :
             SimulateMH(Nr, Nc, frequency_to_store, periodic_bc, SEED) {
 
-        py::print("create SimulateMH(", Nr, Nc, intptr_t(_L), intptr_t(L), ")");
 
     }
 

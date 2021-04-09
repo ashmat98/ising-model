@@ -67,7 +67,17 @@ void Base::init_arrays() {
             L[g(0, c)] = ZERO;
             L[g(Nr + 1, c)] = ZERO;
         }
-    } else {
+    } else if (periodic_bc == -1){
+		// rows periodic
+		for (int r = 1; r <= Nr; r++) {
+            L[g(r, 0)] = &_L[_g(r - 1, Nc - 1)];
+            L[g(r, Nc + 1)] = &_L[_g(r - 1, 0)];
+        }
+        for (int c = 0; c <= Nc+1; c++) {
+            L[g(0, c)] = ZERO;
+            L[g(Nr + 1, c)] = ZERO;
+        }
+	} else {
         assert(true);
     }
 }
