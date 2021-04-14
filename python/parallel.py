@@ -14,7 +14,7 @@ def to_run(i, steps, T, N, M, freq, SEED,bc=1, return_engine=False, init="random
     elif init=="constant":
         engine.constant_init()
     else:
-        assert True
+        assert False
     engine.make_steps(steps)
     if return_engine is True:
         return (T, N, engine.get_sampled_M().copy(), engine.get_sampled_E().copy(), engine)
@@ -47,24 +47,30 @@ def find_relaxation(T, N,M, steps, SEED):
         logger.error(e)
         return None
 
-def find_sigma_e(T, N,M, steps, freq, SEED):
+def find_sigma_e(T, N, steps, freq, SEED):
     
-    _,_,Ms, Es = to_run(1, steps, T=T, N=N,M=M, freq=freq,
+    _,_,Ms, Es = to_run(1, steps, T=T, N=N,M=N, freq=freq,
                                     SEED=SEED+5, return_engine=False,bc=1,
                                     init="random")
-    pos = findpos(Es)
+    pos1 = findpos(Es)
+    pos2 = int(steps_needed_normalized(T)*N*N)
+    pos=max(pos1, pos2)
     Es = Es[3*pos:]
     if len(Es) == 0:
-        return T, len(Es), pos, np.nan, np.nan
+        return T, len(Es), pos1,pos2, np.nan, np.nan
     
-    return T, len(Es), pos, np.mean(Es), np.std(Es)
+    return N, T, len(Es), pos1, pos2, np.mean(Es), np.std(Es)
     
 
 def do_find_decorrelation_time(T, N, M, steps, freq, SEED):
-    relax_steps = steps_needed(T)
-    _,_,Ms, _ = to_run(1, steps+3*relax_steps, T=T, N=N, M=M, freq=freq, bc=1,
+    relax_steps = int(steps_needed_normalized(T)*N*M)
+    
+    _,_,Ms, Es = to_run(1, 3*relax_steps + steps, T=T, N=N, M=M, freq=freq, bc=1,
                             SEED=SEED, return_engine=False, 
                             init="random")
-    Ms = Ms[-steps:]
+    pos2 = findpos(Es)*freq
+    pos3 = max(pos2,relax_steps)
+    
+    Ms = Ms[(2*relax_steps)//freq:]
     dcort = find_decorrelation_time(Ms)
     return dcort * freq
