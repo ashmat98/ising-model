@@ -49,17 +49,20 @@ def find_relaxation(T, N,M, steps, SEED):
 
 def find_sigma_e(T, N, steps, freq, SEED):
     
-    _,_,Ms, Es = to_run(1, steps, T=T, N=N,M=N, freq=freq,
-                                    SEED=SEED+5, return_engine=False,bc=1,
-                                    init="random")
-    pos1 = findpos(Es)
+    
+#     pos1 = findpos(Es)
+    pos1 = 0
     pos2 = int(steps_needed_normalized(T)*N*N)
     pos=max(pos1, pos2)
-    Es = Es[3*pos:]
+    _,_,Ms, Es = to_run(1, 2*pos + steps, T=T, N=N,M=N, freq=freq,
+                                    SEED=SEED+5, return_engine=False,bc=1,
+                                    init="random")
+    Es = Es[2*pos//freq:]
+    Es = Es.astype("float64")
     if len(Es) == 0:
         return T, len(Es), pos1,pos2, np.nan, np.nan
     
-    return N, T, len(Es), pos1, pos2, np.mean(Es), np.std(Es)
+    return N, T, len(Es), pos1, pos2, np.mean(Es), np.std(Es), np.mean(Es**3), np.mean(Es**4)
     
 
 def do_find_decorrelation_time(T, N, M, steps, freq, SEED):
