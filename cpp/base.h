@@ -19,6 +19,7 @@
 //#include <pybind11/numpy.h>
 //namespace py = pybind11;
 
+
 using namespace std;
 
 class Base {
@@ -29,6 +30,7 @@ protected:
 
 public:
 
+    enum BoundaryCondition {Periodic, NotPoriodic, Shifted, RowsPeriodic};
 
     char *_L{};
     char **L{};
@@ -48,15 +50,19 @@ public:
     const char dir_c[4] = {0, 1, 0, -1};
 
     int M; // magnetisation
-    int E; // energy
+    int E; // self interaction energy
+    vector<int> history_M;
+    vector<int> history_E;
+
     double T; //temperature
     int STEPS;
     unsigned int SEED;
-    const int periodic_bc;
+    const BoundaryCondition bc;
 
-    Base(int Nr, int Nc, int periodic_bc = 1, int SEED_ = -1) :
+    Base(int Nr, int Nc, BoundaryCondition bc = Periodic,
+         int SEED_ = -1) :
             Nr(Nr), Nc(Nc), STEPS(0), M(0), E(0), T(0),
-            periodic_bc(periodic_bc),
+            bc(bc),
             generator(SEED + 1), distribution_r(1, Nr), distribution_c(1, Nc) {
         init_arrays();
 //        init_mask();
@@ -91,8 +97,6 @@ public:
 
     tuple<int, int> rand_lattice_site();
 
-    virtual void reset_history();
-
     int calc_E();
 
     int calc_M();
@@ -100,6 +104,18 @@ public:
     int get_E() const;
 
     int get_M() const;
+
+    vector<int> get_sampled_M() const;
+
+    vector<int> get_sampled_E() const;
+
+    void store();
+
+    virtual void reset_history();
+
+    void reset_sampled_M();
+
+    void reset_sampled_E();
 
     void set_T(double temperature);
 

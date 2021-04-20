@@ -15,6 +15,7 @@ message("AAAAAaaa ${CMAKE_BUILD_TYPE} ;; ${CMAKE_CXX_FLAGS_RELEASE} ;; ${CMAKE_C
 
 pybind11_add_module(ising_model
         cpp/ising-model.cpp
+        cpp/metropolis-hasting.cpp
         cpp/base.cpp
         cpp/base.h)
 

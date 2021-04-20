@@ -1,4 +1,5 @@
 from ising_model import SimulateMH
+BC = SimulateMH.BoundaryCondition
 import numpy as np
 import logging
 
@@ -6,8 +7,8 @@ from utils import *
 
 logger = logging.getLogger()
 
-def to_run(i, steps, T, N, M, freq, SEED,bc=1, return_engine=False, init="random"):
-    engine = SimulateMH(N, M, freq, bc, SEED)
+def to_run(i, steps, T, N, M, freq, SEED,bc=BC.Periodic, return_engine=False, init="random", H=0, omega=0):
+    engine = SimulateMH(N, M, freq,H, omega, bc, SEED)
     engine.set_T(T)
     if init=="random":
         engine.random_init()

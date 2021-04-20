@@ -1,5 +1,5 @@
 import numpy as np
-
+from scipy.signal import convolve
 
 def mean_with_err(arr, axis=-1):
     return arr.mean(axis=axis), arr.std(axis=axis) / np.sqrt(arr.shape[axis])
@@ -97,3 +97,6 @@ def find_decorrelation_time(vals):
             last_OK += add//2
             add = 1
     return last_OK
+
+def arrayify(*args):
+    return (np.array(x) for x in args)

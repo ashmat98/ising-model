@@ -28,7 +28,7 @@ void Base::init_arrays() {
             L[g(r, c)] = &_L[_g(r - 1, c - 1)];
         }
     }
-    if (periodic_bc == 1) {
+    if (bc == Periodic) {
         for (int r = 1; r <= Nr; r++) {
             L[g(r, 0)] = &_L[_g(r - 1, Nc - 1)];
             L[g(r, Nc + 1)] = &_L[_g(r - 1, 0)];
@@ -42,7 +42,7 @@ void Base::init_arrays() {
         L[g(Nr + 1, Nc + 1)] = &_L[_g(0, 0)];
         L[g(Nr + 1, 0)] = &_L[_g(0, Nc - 1)];
     }
-    if (periodic_bc == 2) {
+    if (bc == Shifted) {
         int dr = Nr / 2, dc = Nc / 2;
 
         for (int r = 1; r <= Nr; r++) {
@@ -57,7 +57,7 @@ void Base::init_arrays() {
         L[g(0, Nc + 1)] = ZERO;
         L[g(Nr + 1, Nc + 1)] = ZERO;
         L[g(Nr + 1, 0)] = ZERO;
-    } else if (periodic_bc == 0) {
+    } else if (bc == NotPoriodic) {
 
         for (int r = 0; r <= Nr + 1; r++) {
             L[g(r, 0)] = ZERO;
@@ -67,7 +67,7 @@ void Base::init_arrays() {
             L[g(0, c)] = ZERO;
             L[g(Nr + 1, c)] = ZERO;
         }
-    } else if (periodic_bc == -1){
+    } else if (bc == RowsPeriodic){
 		// rows periodic
 		for (int r = 1; r <= Nr; r++) {
             L[g(r, 0)] = &_L[_g(r - 1, Nc - 1)];
@@ -186,10 +186,31 @@ double Base::get_T() const {
     return T;
 }
 
+vector<int> Base::get_sampled_E() const {
+    return history_E;
+}
+
+vector<int> Base::get_sampled_M() const {
+    return history_M;
+}
+
+void Base::reset_sampled_M() {
+    history_M.clear();
+}
+
+void Base::reset_sampled_E() {
+    history_E.clear();
+}
+
 void Base::reset_history() {
     STEPS = 0;
     calc_E();
     calc_M();
+}
+
+void Base::store() {
+    history_E.push_back(get_E());
+    history_M.push_back(get_M());
 }
 
 
