@@ -62,8 +62,7 @@ public:
     Base(int Nr, int Nc, BoundaryCondition bc = Periodic,
          int SEED_ = -1) :
             Nr(Nr), Nc(Nc), STEPS(0), M(0), E(0), T(0),
-            bc(bc),
-            generator(SEED + 1), distribution_r(1, Nr), distribution_c(1, Nc) {
+            bc(bc), distribution_r(1, Nr), distribution_c(1, Nc) {
         init_arrays();
 //        init_mask();
         T = 0;
@@ -71,6 +70,7 @@ public:
             SEED = time(0);
         else
             SEED = SEED_;
+        generator.seed(SEED);
     }
 
     void set_state(const vector<vector<char>> &state);

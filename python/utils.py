@@ -48,6 +48,20 @@ def steps_needed_normalized(T):
     else:
         steps = np.exp(np.log(3*10**6)*(b/(b+T-2.5))**n)
     return steps/32/32
+def relaxation_time_normalized(T):
+    a,b,c = 2.99, 1.85, 7.39
+    def f(x,a,b,c):
+        return a/(x-b)+c
+    M = 4.5e5
+    Tm = a/(np.log(M)-c) + b
+    
+    
+    if T<Tm:
+        steps = M
+    else:
+        steps = np.exp(f(T, a,b,c)) 
+    return steps/32/32
+
 
 def findpos(x, start=0):
     def findpos_rec(x, start=0):
