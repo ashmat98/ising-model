@@ -25,7 +25,8 @@ void SimulateMH::make_steps(int steps, int temperature) {
 }
 
 void SimulateMH::single_step() {
-    static int r, c, dE_interaction;
+    static int r, c;
+    int dE_interaction;
     static double dE_field, p;
     static tuple<int, int> site;
 
@@ -38,7 +39,7 @@ void SimulateMH::single_step() {
 
     p = rand_std_uniform();
 
-    if (T * log(p) < - (dE_interaction + dE_field)) {
+    if (T * log(p) < - (dE_interaction+dE_field)) {
         FLIPS += 1;
         E += dE_interaction;
         M += 2 * flip(r, c);
@@ -46,9 +47,10 @@ void SimulateMH::single_step() {
 }
 
 int SimulateMH::flip_E_change(int r, int c) {
-    static int dE;
+    int dE;
     static char s;
 
+    s =  get(r, c);
     dE = 0;
 
     for (int d = 0; d < 4; ++d) {
