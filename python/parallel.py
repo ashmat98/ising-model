@@ -21,6 +21,23 @@ def to_run(i, steps, T, N, M, freq, SEED,bc=BC.Periodic, return_engine=False, in
         return (T, N, engine.get_sampled_M().copy(), engine.get_sampled_E().copy(), engine)
     return (T, N, engine.get_sampled_M().copy(), engine.get_sampled_E().copy())
 
+def to_run_for_MvsT(i, steps, T, N, M, freq, SEED,bc=BC.Periodic, return_engine=False, init="random", H=0, omega=0):
+    mean_ranges = (10**np.linspace(0, np.log10(steps), 20)).astype(int)
+    
+    T, N, M, E = to_run(i, steps, T, N, M, freq, SEED,bc, return_engine, init, H, omega)
+    
+    meanMs, errMs = [], []
+    meanEs, errEs = [], []
+    for mr in mean_ranges:
+        mean, err = mean_with_err(M[-mr:])
+        meanMs.append(mean), errMs.append(err)
+        
+        mean, err = mean_with_err(E[-mr:])
+        meanEs.append(mean), errEs.append(err)
+        
+
+    meanMs, errMs, meanEs, errEs = arrayify(meanMs, errMs, meanEs, errEs)
+    return (T, N, meanMs, errMs, meanEs, errEs)
 
 
 
@@ -56,7 +73,7 @@ def find_sigma_e(T, N, steps, freq, SEED):
     pos2 = int(steps_needed_normalized(T)*N*N)
     pos=max(pos1, pos2)
     _,_,Ms, Es = to_run(1, 2*pos + steps, T=T, N=N,M=N, freq=freq,
-                                    SEED=SEED+5, return_engine=False,bc=1,
+                                    SEED=SEED+5, return_engine=False,bc=BC.Periodic,
                                     init="random")
     Es = Es[2*pos//freq:]
     Es = Es.astype("float64")
@@ -69,7 +86,7 @@ def find_sigma_e(T, N, steps, freq, SEED):
 def do_find_decorrelation_time(T, N, M, steps, freq, SEED):
     relax_steps = int(steps_needed_normalized(T)*N*M)
     
-    _,_,Ms, Es = to_run(1, 3*relax_steps + steps, T=T, N=N, M=M, freq=freq, bc=1,
+    _,_,Ms, Es = to_run(1, 3*relax_steps + steps, T=T, N=N, M=M, freq=freq, bc=BC.Periodic,
                             SEED=SEED, return_engine=False, 
                             init="random")
     pos2 = findpos(Es)*freq
