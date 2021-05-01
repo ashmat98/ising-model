@@ -72,10 +72,10 @@ def find_sigma_e(T, N, steps, freq, SEED):
     pos1 = 0
     pos2 = int(steps_needed_normalized(T)*N*N)
     pos=max(pos1, pos2)
-    _,_,Ms, Es = to_run(1, 2*pos + steps, T=T, N=N,M=N, freq=freq,
+    _,_,Ms, Es = to_run(1, 3*pos + steps, T=T, N=N,M=N, freq=freq,
                                     SEED=SEED+5, return_engine=False,bc=BC.Periodic,
                                     init="random")
-    Es = Es[2*pos//freq:]
+    Es = Es[3*pos//freq:]
     Es = Es.astype("float64")
     if len(Es) == 0:
         return T, len(Es), pos1,pos2, np.nan, np.nan
