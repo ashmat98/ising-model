@@ -73,8 +73,8 @@ def findpos(x, start=0):
             mean = - mean
             x = -x
             x1 = -x1
-        mean2 = np.mean(x1[x1>=mean])
-
+#         mean2 = np.mean(x1[x1>=mean])
+        mean2 = mean
         #         print(np.where(x>mean2))
         return np.where(x>=mean2)[0][0]
     pos = [0]

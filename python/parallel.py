@@ -41,7 +41,7 @@ def to_run_for_MvsT(i, steps, T, N, M, freq, SEED,bc=BC.Periodic, return_engine=
 
 
 
-def find_relaxation(T, N,M, steps, SEED):
+def find_relaxation(T, N, M, steps, SEED):
     try:
         freq=max(1,steps//10**6)
         _,_,Ms, Es, engine = to_run(1, steps, T=T, N=N,M=M, freq=freq,
@@ -65,7 +65,7 @@ def find_relaxation(T, N,M, steps, SEED):
         logger.error(e)
         return None
 
-def find_sigma_e(T, N, steps, freq, SEED):
+def find_sigma_e(T, N, steps, freq,  SEED, bc=BC.Periodic):
     
     
 #     pos1 = findpos(Es)
@@ -73,7 +73,7 @@ def find_sigma_e(T, N, steps, freq, SEED):
     pos2 = int(steps_needed_normalized(T)*N*N)
     pos=max(pos1, pos2)
     _,_,Ms, Es = to_run(1, 3*pos + steps, T=T, N=N,M=N, freq=freq,
-                                    SEED=SEED+5, return_engine=False,bc=BC.Periodic,
+                                    SEED=SEED+5, return_engine=False,bc=bc,
                                     init="random")
     Es = Es[3*pos//freq:]
     Es = Es.astype("float64")
