@@ -65,7 +65,7 @@ def find_relaxation(T, N, M, steps, SEED):
         logger.error(e)
         return None
 
-def find_sigma_e(T, N, steps, freq,  SEED, bc=BC.Periodic):
+def find_sigma_em(T, N, steps, freq,  SEED, bc=BC.Periodic):
     
     
 #     pos1 = findpos(Es)
@@ -80,8 +80,11 @@ def find_sigma_e(T, N, steps, freq,  SEED, bc=BC.Periodic):
     if len(Es) == 0:
         return T, len(Es), pos1,pos2, np.nan, np.nan
     
-    return N, T, len(Es), pos1, pos2, np.mean(Es), np.std(Es), np.mean(Es**3), np.mean(Es**4)
-    
+    return (N, T, len(Es), pos1, pos2, np.mean(Es), np.std(Es), np.mean(Es**3), np.mean(Es**4), 
+                                       np.mean(Ms), np.std(Ms), np.mean(Ms**3), np.mean(Ms**4))
+                                    
+find_sigma_em.column_names = ["N", "temp", "len(Es)", "pos1","pos2", "mean_E", "std_E", "E^3", "E^4", 
+                                                                     "mean_M", "std_M", "M^3", "M^4"]    
 
 def do_find_decorrelation_time(T, N, M, steps, freq, SEED):
     relax_steps = int(steps_needed_normalized(T)*N*M)

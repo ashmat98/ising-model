@@ -42,7 +42,7 @@ void Base::init_arrays() {
         L[g(Nr + 1, Nc + 1)] = &_L[_g(0, 0)];
         L[g(Nr + 1, 0)] = &_L[_g(0, Nc - 1)];
     }
-    if (bc == Shifted) {
+    else if (bc == Shifted) {
         int dr = Nr / 2, dc = Nc / 2;
 
         for (int r = 1; r <= Nr; r++) {
