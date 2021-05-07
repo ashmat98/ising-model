@@ -39,7 +39,7 @@ void SimulateMH::single_step() {
 
     p = rand_std_uniform();
 
-    if (T * log(p) < - (dE_interaction)) {
+    if (T * log(p) < - (dE_interaction + dE_field)) {
         FLIPS += 1;
         E += dE_interaction;
         M += 2 * flip(r, c);
