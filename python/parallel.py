@@ -86,10 +86,10 @@ def find_sigma_em(T, N, steps, freq,  SEED, bc=BC.Periodic):
 find_sigma_em.column_names = ["N", "temp", "len(Es)", "pos1","pos2", "mean_E", "std_E", "E^3", "E^4", 
                                                                      "mean_M", "std_M", "M^3", "M^4"]    
 
-def do_find_decorrelation_time(T, N, M, steps, freq, SEED):
+def do_find_decorrelation_time(T, N, M, steps, freq, SEED, bc=BC.Periodic):
     relax_steps = int(steps_needed_normalized(T)*N*M)
     
-    _,_,Ms, Es = to_run(1, 3*relax_steps + steps, T=T, N=N, M=M, freq=freq, bc=BC.Periodic,
+    _,_,Ms, Es = to_run(1, 3*relax_steps + steps, T=T, N=N, M=M, freq=freq, bc=bc,
                             SEED=SEED, return_engine=False, 
                             init="random")
     pos2 = findpos(Es)*freq
