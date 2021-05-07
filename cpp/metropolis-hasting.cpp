@@ -46,7 +46,7 @@ void SimulateMH::single_step() {
     }
 }
 
-int SimulateMH::flip_E_change(int r, int c) {
+int SimulateMH::flip_E_change(int r, int c) const{
     int dE;
     static char s;
 

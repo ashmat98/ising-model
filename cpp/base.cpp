@@ -204,6 +204,8 @@ void Base::reset_sampled_E() {
 
 void Base::reset_history() {
     STEPS = 0;
+    reset_sampled_M();
+    reset_sampled_E();
     calc_E();
     calc_M();
 }

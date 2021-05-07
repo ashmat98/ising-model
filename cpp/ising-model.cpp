@@ -1,4 +1,7 @@
-
+/**
+ * This cpp file defined the bindings for python and creates
+ * module which can be imported to python
+ */
 #include "metropolis-hasting.h"
 
 #include <pybind11/pybind11.h>
@@ -11,6 +14,10 @@ namespace py = pybind11;
 namespace py = pybind11;
 using namespace pybind11::literals;
 
+/*!
+ * pythonic variant of Base class: Some functions need different
+ * types of arguments to work with python.
+ */
 class BasePy : public Base {
 public:
     using Base::Base;
@@ -32,14 +39,13 @@ public:
 
 };
 
+/*!
+ * pythonic variant of SimulateMH class: Some functions need different
+ * types of arguments to work with python.
+ */
 class SimulateMHPy : public SimulateMH {
 public:
     using SimulateMH::SimulateMH;
-
-//    SimulateMHPy(int Nr, int Nc, int frequency_to_store = 1,
-//                 int periodic_bc = 1, int SEED = -1) :
-//            SimulateMH(Nr, Nc, frequency_to_store, periodic_bc, SEED) {
-//    }
 
     void set_state_pythonic(const py::array_t<int, py::array::c_style> &state) {
         auto st = state.unchecked<2>();
@@ -66,14 +72,14 @@ public:
 };
 
 
+/*!
+ * define all the necessary language bindings
+ */
 PYBIND11_MODULE(ising_model, m) {
     m.doc() = R"pbdoc(
        ising_model simulator bindings for python
         -----------------------
     )pbdoc";
-//    py::class_<Base> _base_for_enum(m, "abc");
-//
-
 
     auto base_class = py::class_<Base>(m, "__Base")
             .def(py::init<int, int, Base::BoundaryCondition, int>(),
