@@ -67,3 +67,9 @@ E = engine.get_sampled_E()
 etc.
 ```
 
+Paralelisation usnig `multiprocessing.pool`:
+```python
+from parallel import to_run
+
+```
+
