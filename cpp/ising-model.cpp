@@ -81,6 +81,7 @@ PYBIND11_MODULE(ising_model, m) {
             .def("random_init", &Base::random_init)
             .def("constant_init", &Base::constant_init)
             .def("get", &Base::get)
+            .def("set", &Base::set)
             .def("get_E", &Base::get_E)
             .def("get_M", &Base::get_M)
             .def("calc_E", &Base::calc_E)
