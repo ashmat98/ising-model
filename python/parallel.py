@@ -7,7 +7,10 @@ from utils import *
 
 logger = logging.getLogger()
 
-def to_run(i, steps, T, N, M, freq, SEED,bc=BC.Periodic, return_engine=False, init="random", H=0, omega=0):
+def to_run(i, steps, T, N, M, freq, SEED=None, bc=BC.Periodic, return_engine=False, init="random", H=0, omega=0):
+    if SEED is None:
+        SEED = np.random.randint(10**8)
+        
     engine = SimulateMH(N, M, freq,H, omega, bc, SEED)
     engine.set_T(T)
     if init=="random":

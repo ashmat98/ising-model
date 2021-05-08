@@ -1,5 +1,12 @@
 import numpy as np
 from scipy.signal import convolve
+from IPython.display import Audio
+
+TTc = 2/np.log(1+np.sqrt(2))
+
+def beep():
+    sound_file = 'http://www.soundjay.com/button/beep-07.wav'
+    return Audio(sound_file, autoplay=True)    
 
 def mean_with_err(arr, axis=-1):
     return arr.mean(axis=axis), arr.std(axis=axis) / np.sqrt(arr.shape[axis])
