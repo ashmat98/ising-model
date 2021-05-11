@@ -5,19 +5,31 @@ from IPython.display import Audio
 TTc = 2/np.log(1+np.sqrt(2))
 
 def beep():
+    """
+    beeps at run. Useful tool in jupyter notebook.
+    """
     sound_file = 'http://www.soundjay.com/button/beep-07.wav'
     return Audio(sound_file, autoplay=True)    
 
 def mean_with_err(arr, axis=-1):
+    """
+    returns mean and error estimate of the array
+    """
     return arr.mean(axis=axis), arr.std(axis=axis) / np.sqrt(arr.shape[axis])
 
 
 def median_with_err(arr, axis=-1):
+    """
+    returns median and error estimate of the array
+    """
     mu = np.median(arr, axis=axis)
     return mu, np.mean(np.abs(arr - mu), axis=axis)
 
 
 def moving_average(x, w, stride=1):
+    """
+    Fast moving average with stride.
+    """
     s = (x.shape[0] // stride) * stride
     x = x[-s:]
     x = x.reshape((x.shape[0] // stride, stride))
@@ -47,6 +59,10 @@ def cum_mean_err(x):
 
 
 def steps_needed_normalized(T):
+    """
+    Returns needed steps for relaxation at given temperature and
+    for lattice size 1x1. Further multiply with (Nr x Nc)
+    """
     steps = 10**5
     b=0.08
     n=0.1
@@ -56,6 +72,10 @@ def steps_needed_normalized(T):
         steps = np.exp(np.log(3*10**6)*(b/(b+T-2.5))**n)
     return steps/32/32
 def relaxation_time_normalized(T):
+    """
+    Returns relaxation time at given temperature and
+    for lattice size 1x1. Further multiply with (Nr x Nc)
+    """
     a,b,c = 2.99, 1.85, 7.39
     def f(x,a,b,c):
         return a/(x-b)+c
@@ -71,6 +91,9 @@ def relaxation_time_normalized(T):
 
 
 def findpos(x, start=0):
+    """
+    finds point after which assumed stationary state.
+    """
     def findpos_rec(x, start=0):
         x1 = x[start:]
 
@@ -98,6 +121,9 @@ def calc_autocor(dt, vals):
     return a
 
 def find_decorrelation_time(vals):
+    """
+    Find decorrelation time with binary search.
+    """
     mean = np.mean(vals)
     vals1 = vals-mean
     var = np.var(vals)
@@ -120,4 +146,7 @@ def find_decorrelation_time(vals):
     return last_OK
 
 def arrayify(*args):
+    """
+    converts arguments to numpy arrays
+    """
     return (np.array(x) for x in args)

@@ -1,8 +1,10 @@
 # Ising-model
-This engine runs Metropolis-Hasting algorithm on 2D ising model. It provides base framework for the extension to more 
-complex models with extended interactions. At this stage, only 4-neighbour interactions are accounted.
+This engine runs Metropolis-Hasting algorithm on 2D Ising model. It provides 
+base framework for the extension to more 
+complex models with extended interactions. 
+At this stage, only 4-neighbour interactions are accounted.
 
-The project strcture is:
+The project structure is:
 ```
 ising-model
  ┣ cpp                      /* C++ part, simulation engine */
@@ -19,16 +21,21 @@ ising-model
  ┃ ┃ ┗ ...
  ┃ ┣ figs                   /* generated figures */
  ┃ ┃ ┗ ...
+ ┃ ┣ Results.ipynb          /* results and code for images */
+ ┃ ┣ ****.ipynb             /* other jupyter notebooks for running 
+ ┃ ┃                           simulator for specific task */
  ┃ ┣ parallel.py            /* functions that run the engine for specific
  ┃ ┃                            task, can be run in paralel. */
  ┃ ┣ style.py               /* style for plots */
  ┃ ┗ utils.py               /* utility functions */
+ ┣ report.pdf               /* The report on this project */
  ┣ CMakeLists.txt           /* configuration for CMake */
  ┗ README.md                /* This file */
 ```
 
 ###Compilation
-1. Install [conda environment](https://docs.conda.io/en/latest/miniconda.html) for convenience.
+1. Install [conda environment](https://docs.conda.io/en/latest/miniconda.html)
+   for convenience.
 2. Run these commands in the shell
 ```shell
 $ conda install pybind11 cmake
@@ -69,7 +76,30 @@ etc.
 
 Paralelisation usnig `multiprocessing.pool`:
 ```python
-from parallel import to_run
+from multiprocessing import Pool
+import numpy as np
+from parallel import to_run, BC
 
+pool = Pool(4)
+Ts = np.linspace(0,4,100)
+
+runs = len(Ts)
+
+res = pool.starmap(to_run,
+    zip(*(np.arange(runs),
+          [10_000_000]*runs, # steps
+          Ts, # temperature
+          [32]*runs, # lattice size Nr
+          [32]*runs, # lattice size Nc
+          [1]*runs, # frequency
+          np.random.randint(0,10**8, runs), # seed
+          [BC.Periodic]*runs, # bc
+          [False]*runs, # return_engine
+          ["random"]*runs, # init
+          [0]*runs, # H field
+          [0]*runs # H omega
+          ))
+)
 ```
-
+So the above code will run 100 independent simulatins with given 
+parameters (in this case the temperature changes).

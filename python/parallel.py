@@ -7,7 +7,25 @@ from utils import *
 
 logger = logging.getLogger()
 
-def to_run(i, steps, T, N, M, freq, SEED=None, bc=BC.Periodic, return_engine=False, init="random", H=0, omega=0):
+def to_run(i, steps, T, N, M, freq, SEED=None, bc=BC.Periodic,
+           return_engine=False, init="random", H=0, omega=0):
+    """
+    This function helps to run simulations parallel.
+    :param i: index of the run.
+    :param steps:
+    :param T: temperature
+    :param N: lattice size Nr
+    :param M: lattice size Nc
+    :param freq: sampling frequency: every freq step
+    :param SEED: seed for the random engine
+    :param bc: boundary conditions
+    :param return_engine:
+    :param init:
+    :param H: external field
+    :param omega: frequency of the external field
+    :return: (T, N, historical magnetisation,  historical energy)
+    """
+
     if SEED is None:
         SEED = np.random.randint(10**8)
         
@@ -25,6 +43,9 @@ def to_run(i, steps, T, N, M, freq, SEED=None, bc=BC.Periodic, return_engine=Fal
     return (T, N, engine.get_sampled_M().copy(), engine.get_sampled_E().copy())
 
 def to_run_for_MvsT(i, steps, T, N, M, freq, SEED,bc=BC.Periodic, return_engine=False, init="random", H=0, omega=0):
+    """
+    function for magnetisation calculation
+    """
     mean_ranges = (10**np.linspace(0, np.log10(steps), 20)).astype(int)
     
     T, N, M, E = to_run(i, steps, T, N, M, freq, SEED,bc, return_engine, init, H, omega)
@@ -45,6 +66,9 @@ def to_run_for_MvsT(i, steps, T, N, M, freq, SEED,bc=BC.Periodic, return_engine=
 
 
 def find_relaxation(T, N, M, steps, SEED):
+    """
+    function for relaxation time calculation
+    """
     try:
         freq=max(1,steps//10**6)
         _,_,Ms, Es, engine = to_run(1, steps, T=T, N=N,M=M, freq=freq,
@@ -69,9 +93,10 @@ def find_relaxation(T, N, M, steps, SEED):
         return None
 
 def find_sigma_em(T, N, steps, freq,  SEED, bc=BC.Periodic):
-    
-    
-#     pos1 = findpos(Es)
+    """
+    function for moment calculations
+    """
+
     pos1 = 0
     pos2 = int(steps_needed_normalized(T)*N*N)
     pos=max(pos1, pos2)
@@ -91,6 +116,10 @@ find_sigma_em.column_names = ["N", "temp", "len(Es)", "pos1","pos2", "mean_E", "
                                          "mean_M", "mean_abs_M", "std_M", "M^3", "absM^3", "M^4"]    
 
 def do_find_decorrelation_time(T, N, M, steps, freq, SEED, bc=BC.Periodic):
+    """
+    function for decorrelation time calculation
+    """
+
     relax_steps = int(steps_needed_normalized(T)*N*M)
     
     _,_,Ms, Es = to_run(1, 3*relax_steps + steps, T=T, N=N, M=M, freq=freq, bc=bc,
